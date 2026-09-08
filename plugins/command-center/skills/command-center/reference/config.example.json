@@ -1,0 +1,53 @@
+{
+  "user": {
+    "email": "firstlast@salesforce.com",
+    "fullName": "First Last",
+    "firstName": "First",
+    "sfUserId": "005000000000000AAA",
+    "slackUserId": "U000EXAMPLE",
+    "roleTitle": "Enterprise Digital Account Executive",
+    "segment": "ENTR",
+    "segmentName": "Your vertical",
+    "levels": "L1 Marketing Cloud, L2 Data 360 & Agentforce",
+    "analyticsName": "Last",
+    "managerName": "Manager Name",
+    "managerFirst": "Manager"
+  },
+
+  "products": ["Marketing Cloud", "Data 360", "Agentforce"],
+
+  "coreAes": [
+    { "name": "Core AE One" },
+    { "name": "Core AE Two" }
+  ],
+
+  "families": [],
+
+  "slackChannels": [],
+
+  "links": {
+    "playbook": "",
+    "dashboard": ""
+  },
+
+  "sf": {
+    "apiVersion": "v66.0",
+    "waveKpiDataset": "",
+    "waveAcvDataset": ""
+  },
+
+  "tools": {
+    "sfRead": "mcp__REPLACE-WITH-YOUR-SALESFORCE-CONNECTOR__dispatch_readonly",
+    "sfWrite": null,
+    "driveSearch": null,
+    "slackSearchPublic": null,
+    "slackSearchAll": null,
+    "gmailSearch": null,
+    "gmailCreateDraft": null,
+    "gmailLabelThread": null,
+    "gmailUnlabelThread": null,
+    "calendarList": null
+  },
+
+  "hpfSnapshot": null
+}

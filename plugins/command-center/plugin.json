@@ -1,0 +1,17 @@
+{
+  "name": "command-center",
+  "version": "0.1.0",
+  "description": "Personal Command Center for Marketing Cloud specialist AEs — builds a single-page dashboard over your own Salesforce pipeline, specialist forecasts, calendar, inbox and Slack, from a shared template plus your own config.",
+  "author": {
+    "name": "Bernardo Medrado",
+    "email": "bmedrado@salesforce.com"
+  },
+  "keywords": [
+    "salesforce",
+    "marketing-cloud",
+    "specialist-ae",
+    "pipeline",
+    "forecast",
+    "command-center"
+  ]
+}

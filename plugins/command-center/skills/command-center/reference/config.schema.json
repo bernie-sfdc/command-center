@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Command Center install config",
+  "description": "Everything install-specific about one person's command center. Lives at command-center.config.json next to the built index.html. Contains the operator's own identity and the shape of their book, so it is local-only: never commit it, and never commit a built index.html either.",
+  "type": "object",
+  "required": ["user", "tools"],
+  "additionalProperties": false,
+
+  "properties": {
+    "user": {
+      "type": "object",
+      "required": ["email", "fullName", "sfUserId"],
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Work email. Used to identify the operator's own messages and drafts."
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Org62 display name, exactly. Used to filter the operator's own Slack messages out of the signals feed, so a mismatch means seeing your own posts back."
+        },
+        "firstName": { "type": "string", "description": "Used for email sign-off." },
+        "sfUserId": {
+          "type": "string",
+          "pattern": "^[0-9A-Za-z]{15}([0-9A-Za-z]{3})?$",
+          "description": "Salesforce User Id. Every query keys off this. Do NOT guess it: a wrong-but-valid id returns zero rows from every panel, which looks like a broken connector rather than a bad config. Read it from the org: SELECT Id FROM User WHERE Username = '<your username>'."
+        },
+        "slackUserId": {
+          "type": "string",
+          "pattern": "^U[A-Z0-9]{6,12}$",
+          "description": "Slack member id (Profile -> More -> Copy member ID). Without it the DM and mentions panel stays empty."
+        },
+        "roleTitle": {
+          "type": "string",
+          "default": "Enterprise Digital Account Executive",
+          "description": "Appears in the header and in the persona line of every generated draft."
+        },
+        "segment": {
+          "type": "string",
+          "default": "ENTR",
+          "description": "MACRO_SEGMENT code as it appears in the analytics dataset. Sets the HPF thresholds."
+        },
+        "segmentName": {
+          "type": "string",
+          "description": "Human-readable vertical, e.g. 'Healthcare & Life Sciences'. Steers the generated narrative."
+        },
+        "levels": {
+          "type": "string",
+          "description": "Specialisation shown in the header, e.g. 'L1 Marketing Cloud, L2 Data 360 & Agentforce'."
+        },
+        "analyticsName": {
+          "type": "string",
+          "description": "Surname as it appears in EMP_NM in the CRM Analytics dataset. Defaults to the last word of fullName."
+        },
+        "managerName": { "type": "string" },
+        "managerFirst": { "type": "string" }
+      }
+    },
+
+    "products": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": ["Marketing Cloud", "Data 360", "Agentforce"],
+      "description": "The products this specialist carries. Drives the persona line and the L1/L2 attribution split."
+    },
+
+    "coreAes": {
+      "type": "array",
+      "description": "The core AEs whose accounts this specialist works. Order matters: it is the display order of the By-core-AE tab. Names must match Org62 owner names; the app strips '(WK)' aliases itself.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+
+    "families": {
+      "type": "array",
+      "description": "Account-family matching rules. Rules only, never customer records. Leave empty to have the app derive the book from AccountTeamMember at first load, which is the recommended start.",
+      "items": {
+        "type": "object",
+        "required": ["slug", "disp", "re"],
+        "additionalProperties": false,
+        "properties": {
+          "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "disp": { "type": "string" },
+          "tier": { "enum": ["strategic", "active", "territory"] },
+          "seg": { "type": "string" },
+          "re": {
+            "type": "string",
+            "description": "JavaScript regex source matching this family's names and subsidiaries. Be specific: a bare \\bcook\\b matched 'Cook County Health' and every person surnamed Cook. These are tested against Drive titles, calendar summaries and email subjects, so short tokens collide."
+          },
+          "reFlags": { "type": "string", "default": "i", "pattern": "^[gimsuy]*$" }
+        }
+      }
+    },
+
+    "slackChannels": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Team channels to watch for pricing and product chatter, e.g. '#some-product-ama'."
+    },
+
+    "links": {
+      "type": "object",
+      "properties": {
+        "playbook": { "type": "string", "description": "FY playbook deck URL." },
+        "dashboard": { "type": "string", "description": "AE & FLM performance dashboard URL." }
+      }
+    },
+
+    "sf": {
+      "type": "object",
+      "properties": {
+        "apiVersion": { "type": "string", "default": "v66.0", "pattern": "^v\\d+\\.\\d+$" },
+        "waveKpiDataset": {
+          "type": "string",
+          "description": "CRM Analytics dataset path for the KPI row, as '<dataset>/<version>'. Org-wide, not personal, but not in this repo either: get it from whoever set up the performance dashboard."
+        },
+        "waveAcvDataset": { "type": "string", "description": "Dataset id for engaged ACV." }
+      }
+    },
+
+    "tools": {
+      "type": "object",
+      "required": ["sfRead"],
+      "description": "Connector tool names, resolved on the machine that will run the app. These are per-install ids: they are NOT portable between people, which is why they are config and not baked into the template. Any omitted or null entry degrades its panel rather than breaking the app.",
+      "additionalProperties": false,
+      "properties": {
+        "sfRead":            { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" },
+        "sfWrite":           { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$", "description": "Required for saving SFRs and next steps. Must also be declared in the artifact's own mcp_tools manifest or the bridge refuses the call." },
+        "driveSearch":       { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" },
+        "slackSearchPublic": { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" },
+        "slackSearchAll":    { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" },
+        "gmailSearch":       { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" },
+        "gmailCreateDraft":  { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" },
+        "gmailLabelThread":  { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" },
+        "gmailUnlabelThread":{ "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" },
+        "calendarList":      { "type": ["string", "null"], "pattern": "^mcp__[\\w.-]+__\\w+$" }
+      }
+    },
+
+    "hpfSnapshot": {
+      "type": ["object", "null"],
+      "description": "Optional manual paste of one CRM Analytics row, for when the live dataset read is unavailable. Personal performance data: keep it out of any repo.",
+      "additionalProperties": true
+    }
+  }
+}

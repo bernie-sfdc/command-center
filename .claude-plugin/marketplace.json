@@ -1,0 +1,18 @@
+{
+  "name": "mc-specialist-tools",
+  "owner": {
+    "name": "Bernardo Medrado",
+    "email": "bmedrado@salesforce.com"
+  },
+  "metadata": {
+    "description": "Internal tooling for Marketing Cloud specialist AEs. Templates and skills only — no customer data, no credentials.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "command-center",
+      "source": "./plugins/command-center",
+      "description": "Build your own Command Center: one page over your Salesforce pipeline, specialist forecasts, calendar, inbox and Slack."
+    }
+  ]
+}

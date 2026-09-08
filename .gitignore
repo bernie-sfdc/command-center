@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------------------
+# Everything here is a leak if committed. The repo holds the TEMPLATE only.
+#
+# The template is safe because scan_pii.py gates it. A built index.html is not:
+# it embeds one person's identity, their book, and whatever POV notes they
+# added. Same for the config. Same for the source artifact this template was
+# generated from.
+# ---------------------------------------------------------------------------
+
+# Personal config and built output
+command-center.config.json
+*.config.json
+!plugins/command-center/skills/command-center/reference/config.example.json
+
+# Built command centers — anything index.html that is not a template.
+# `build/` is listed explicitly: the bare `index.html` patterns did not match
+# build/test-index.html, so `make check` output would have been committable.
+build/
+index.html
+**/index.html
+!plugins/command-center/skills/command-center/template/index.html.tmpl
+
+# The personal source artifact the template is derived from
+ae-command-center.html
+ae-command-center*.html
+command-center-app.html
+
+# Curated account intelligence — never shareable
+pov-data.json
+pov-data*.json
+linkedin-data*.json
+*-pov.json
+
+# Manually pasted analytics rows (personal performance data)
+hpf-*.json
+HPF-SCORECARD.md
+
+# Editor and OS noise
+*.bak
+*.bak-*
+*.orig
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
